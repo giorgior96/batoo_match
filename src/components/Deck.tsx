@@ -161,7 +161,7 @@ export function Deck({ initialBoats }: DeckProps) {
                 </button>
             </div>
 
-            <div className="mt-6 text-center text-xs text-neutral-300 font-inter">
+            <div className="mt-6 text-center text-[10px] uppercase tracking-widest text-neutral-300 font-inter">
                 {currentIndex + 1} / {boats.length} {t.progress} {loading && `• ${t.loadingSmall}`}
             </div>
 

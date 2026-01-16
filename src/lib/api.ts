@@ -313,8 +313,8 @@ export async function contactBroker(boat: Boat, userData?: { name: string, email
             surname: "",
             email: userData.email,
             phone: userData.phone,
-            interestedIn: `Lead da Batoo App: ${boat.Builder} ${boat.Model}`,
-            message: `Un nuovo utente ha espresso interesse per questa barca tramite l'app Batoo Match.\n\nDati Contatto Utente:\nNome: ${userData.name}\nEmail: ${userData.email}\nTelefono: ${userData.phone}\n\nBarca di interesse:\n${boat.Builder} ${boat.Model} (${boat.YearBuilt})\nPrezzo: ${boat.SellPriceFormatted}\n\nSi prega di ricontattare il cliente al più presto.`,
+            interestedIn: `RICHIESTA MATCH: ${boat.Builder} ${boat.Model}`,
+            message: `Salve,\n\nUn utente dell'App Batoo Match ha appena espresso un forte interesse per questa barca caricata su Batoo.it.\n\nDETTAGLI UTENTE:\n- Nome: ${userData.name}\n- Email: ${userData.email}\n- Telefono: ${userData.phone}\n\nDETTAGLI IMBARCAZIONE:\n- Barca: ${boat.Builder} ${boat.Model} (${boat.YearBuilt})\n- Prezzo: ${boat.SellPriceFormatted}\n- Link: https://www.batoo.it/barche/${boat.BoatID}\n\nSi prega di ricontattare l'utente al più presto per fornire maggiori informazioni.\n\nCordiali saluti,\nTeam Batoo Match`,
             brokerEmail: brokerEmail,
             to: brokerEmail
         };

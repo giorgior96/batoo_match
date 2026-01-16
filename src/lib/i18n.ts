@@ -1,51 +1,41 @@
-"use client";
-
 import { useState, useEffect } from 'react';
 
 type Language = 'it' | 'en';
 
 const translations = {
     it: {
-        loading: "Sto cercando le barche migliori...",
-        noMoreBoats: "Nessuna altra barca disponibile al momento.",
-        onboardingTitle: "Benvenuto a Bordo!",
-        onboardingSubtitle: "Inserisci i tuoi dati così i broker potranno contattarti quando trovi la barca dei tuoi sogni.",
-        placeholderName: "Nome e Cognome",
-        placeholderEmail: "Indirizzo Email",
-        placeholderPhone: "Numero di Telefono",
-        submitButton: "Inizia a Scoprire",
-        dataPrivacy: "I tuoi dati saranno condivisi solo con i broker delle barche che ti piacciono.",
-        successTitle: "Tutto pronto!",
-        successSubtitle: "Goditi la ricerca della tua barca ideale.",
-        statsButton: "Vedi Statistiche",
-        statsAlert: (swipes: number, likes: number, rate: string) => `Statistiche:\n${swipes} swipate\n${likes} mi piace (${rate}%)\n`,
-        progress: "barche",
-        loadingSmall: "Caricamento...",
-        viewMore: "Vedi Foto",
-        photos: "Foto",
-        limitReachedTitle: "Hai finito i Like per oggi!",
-        limitReachedSubtitle: "Torna domani per scoprire nuove barche."
+        loading: "Preparando le migliori barche per te...",
+        loadingSmall: "Cerco altre barche...",
+        onboardingTitle: "Trova la barca dei tuoi sogni",
+        onboardingSubtitle: "Inserisci i tuoi dati per iniziare. Per ogni barca che ti piace (Like), invieremo una richiesta automatica al broker.",
+        nameLabel: "Nome e Cognome",
+        emailLabel: "Email",
+        phoneLabel: "Telefono",
+        privacyLabel: "Accetto la Privacy Policy e dichiaro che ogni Like equivale a una richiesta di contatto al broker.",
+        submitButton: "Inizia il Match",
+        progress: "scoperte",
+        viewMore: "Vedi Immagini",
+        statsTitle: "Tue Statistiche",
+        statsAlert: (total: number, likes: number, rate: string) => `Hai visto ${total} barche e ne hai salvate ${likes}.\nIl tuo tasso di interesse è del ${rate}%.`,
+        limitReachedTitle: "Limite Giornaliero Raggiunto",
+        limitReachedSubtitle: "Hai espresso interesse per 10 barche oggi. Torna domani per scoprirne di nuove!"
     },
     en: {
-        loading: "Finding the best boats for you...",
-        noMoreBoats: "No more boats available at the moment.",
-        onboardingTitle: "Welcome Aboard!",
-        onboardingSubtitle: "Enter your details so brokers can contact you when you find your dream boat.",
-        placeholderName: "Full Name",
-        placeholderEmail: "Email Address",
-        placeholderPhone: "Phone Number",
-        submitButton: "Start Swiping",
-        dataPrivacy: "I agree to the Privacy Policy and data sharing with brokers.",
-        successTitle: "You're all set!",
-        successSubtitle: "Enjoy finding your perfect boat.",
-        statsButton: "View Insights",
-        statsAlert: (swipes: number, likes: number, rate: string) => `Stats:\n${swipes} swipes\n${likes} likes (${rate}%)\n`,
-        progress: "boats",
-        loadingSmall: "Loading...",
+        loading: "Preparing the best boats for you...",
+        loadingSmall: "Finding more boats...",
+        onboardingTitle: "Find your dream boat",
+        onboardingSubtitle: "Enter your details to start. For every boat you like, we will send an automatic request to the broker.",
+        nameLabel: "Full Name",
+        emailLabel: "Email",
+        phoneLabel: "Phone Number",
+        privacyLabel: "I accept the Privacy Policy and understand that every Like counts as a contact request to the broker.",
+        submitButton: "Start Matching",
+        progress: "discovered",
         viewMore: "View Images",
-        photos: "Photos",
-        limitReachedTitle: "Daily Limit Reached!",
-        limitReachedSubtitle: "Come back tomorrow for more boats."
+        statsTitle: "Your Statistics",
+        statsAlert: (total: number, likes: number, rate: string) => `You've seen ${total} boats and saved ${likes}.\nYour interest rate is ${rate}%.`,
+        limitReachedTitle: "Daily Limit Reached",
+        limitReachedSubtitle: "You've liked 10 boats today. Come back tomorrow to discover more!"
     }
 };
 

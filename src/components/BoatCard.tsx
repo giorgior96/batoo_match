@@ -125,15 +125,6 @@ export function BoatCard({ boat, onSwipe, style, drag = false }: BoatCardProps) 
                             <span>{t.viewMore}</span>
                         </button>
                     </div>
-
-                    {/* New Badge */}
-                    {boat.New && (
-                        <div className="absolute top-4 left-4 z-30">
-                            <span className="px-3 py-1 rounded-full text-[10px] font-bold bg-brand-primary text-white shadow-lg font-inter">
-                                NEW
-                            </span>
-                        </div>
-                    )}
                 </div>
 
                 {/* Content Section (Bottom) */}

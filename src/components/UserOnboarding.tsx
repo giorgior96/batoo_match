@@ -1,140 +1,126 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { X, Mail, User, Phone, Check } from "lucide-react";
 import { useLanguage } from "@/lib/i18n";
+import { motion, AnimatePresence } from "framer-motion";
 
-interface UserData {
-    name: string;
-    email: string;
-    phone: string;
-}
+export const USER_DATA_KEY = 'batoo_user_onboarding';
 
-export const USER_DATA_KEY = 'batoo_user_data';
-
-export function UserOnboarding({ onComplete }: { onComplete?: (data: UserData) => void }) {
+export function UserOnboarding() {
     const t = useLanguage();
     const [isOpen, setIsOpen] = useState(false);
-    const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
-    const [phone, setPhone] = useState("");
-    const [submitted, setSubmitted] = useState(false);
+    const [formData, setFormData] = useState({
+        name: "",
+        email: "",
+        phone: ""
+    });
+    const [acceptedPrivacy, setAcceptedPrivacy] = useState(false);
 
     useEffect(() => {
-        // Check if user data exists
-        if (typeof window !== 'undefined') {
-            const stored = localStorage.getItem(USER_DATA_KEY);
-            if (!stored) {
-                // Delay slightly for smooth entrance
-                setTimeout(() => setIsOpen(true), 1500);
-            } else {
-                if (onComplete) onComplete(JSON.parse(stored));
-            }
+        const stored = localStorage.getItem(USER_DATA_KEY);
+        if (!stored) {
+            setIsOpen(true);
         }
-    }, [onComplete]);
+    }, []);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-
-        const data: UserData = { name, email, phone };
-        localStorage.setItem(USER_DATA_KEY, JSON.stringify(data));
-
-        setSubmitted(true);
-        setTimeout(() => {
+        if (formData.name && formData.email && formData.phone && acceptedPrivacy) {
+            localStorage.setItem(USER_DATA_KEY, JSON.stringify(formData));
             setIsOpen(false);
-            if (onComplete) onComplete(data);
-        }, 1500);
+        }
     };
 
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
-            <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl p-8 relative overflow-hidden">
+        <AnimatePresence>
+            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    className="bg-white rounded-[32px] p-8 w-full max-w-md shadow-2xl overflow-hidden relative"
+                >
+                    {/* Brand Accents */}
+                    <div className="absolute top-0 inset-x-0 h-2 bg-gradient-to-r from-brand-primary to-sky-400" />
 
-                {/* Decorative Background */}
-                <div className="absolute top-0 inset-x-0 h-32 bg-gradient-to-br from-brand-secondary to-brand-primary opacity-10" />
-
-                {/* Content */}
-                <div className="relative z-10">
-                    <div className="text-center mb-6">
-                        <div className="w-16 h-16 bg-brand-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 text-brand-primary">
-                            <User size={32} />
-                        </div>
-                        <h2 className="text-2xl font-apfel font-bold text-brand-dark mb-2">{t.onboardingTitle}</h2>
-                        <p className="text-neutral-500 font-inter text-sm">
+                    <div className="flex flex-col items-center text-center mb-8">
+                        <img src="/batoo-logo-dark.svg" alt="Batoo Logo" className="h-8 mb-6" />
+                        <h2 className="text-2xl font-bold font-apfel text-neutral-900 mb-2">
+                            {t.onboardingTitle}
+                        </h2>
+                        <p className="text-neutral-500 text-sm font-inter">
                             {t.onboardingSubtitle}
                         </p>
                     </div>
 
-                    {!submitted ? (
-                        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-                            <div className="relative">
-                                <User className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400" size={18} />
-                                <input
-                                    type="text"
-                                    placeholder={t.placeholderName}
-                                    required
-                                    value={name}
-                                    onChange={(e) => setName(e.target.value)}
-                                    className="w-full pl-12 pr-4 py-3 rounded-xl border border-neutral-200 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 outline-none transition-all font-inter"
-                                />
-                            </div>
-
-                            <div className="relative">
-                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400" size={18} />
-                                <input
-                                    type="email"
-                                    placeholder={t.placeholderEmail}
-                                    required
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    className="w-full pl-12 pr-4 py-3 rounded-xl border border-neutral-200 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 outline-none transition-all font-inter"
-                                />
-                            </div>
-
-                            <div className="relative">
-                                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400" size={18} />
-                                <input
-                                    type="tel"
-                                    placeholder={t.placeholderPhone}
-                                    required
-                                    value={phone}
-                                    onChange={(e) => setPhone(e.target.value)}
-                                    className="w-full pl-12 pr-4 py-3 rounded-xl border border-neutral-200 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 outline-none transition-all font-inter"
-                                />
-                            </div>
-
-                            <div className="flex items-start gap-2 mt-2">
-                                <input
-                                    type="checkbox"
-                                    id="privacy"
-                                    required
-                                    className="mt-1 w-4 h-4 rounded border-gray-300 text-brand-primary focus:ring-brand-primary"
-                                />
-                                <label htmlFor="privacy" className="text-xs text-neutral-500 text-left leading-tight">
-                                    {t.dataPrivacy} <span className="underline cursor-pointer">Privacy Policy</span>.
-                                </label>
-                            </div>
-
-                            <button
-                                type="submit"
-                                className="w-full py-3 mt-2 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-colors shadow-lg shadow-slate-900/20 disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                {t.submitButton}
-                            </button>
-                        </form>
-                    ) : (
-                        <div className="flex flex-col items-center justify-center py-8 animate-in fade-in zoom-in">
-                            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center text-green-600 mb-4">
-                                <Check size={40} strokeWidth={3} />
-                            </div>
-                            <h3 className="text-xl font-bold text-neutral-800">{t.successTitle}</h3>
-                            <p className="text-neutral-500">{t.successSubtitle}</p>
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                        <div>
+                            <label className="block text-[10px] uppercase tracking-widest font-bold text-neutral-400 mb-1 ml-2">
+                                {t.nameLabel}
+                            </label>
+                            <input
+                                required
+                                type="text"
+                                value={formData.name}
+                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                className="w-full px-5 py-4 rounded-2xl bg-neutral-50 border border-neutral-100 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all font-inter"
+                                placeholder="Mario Rossi"
+                            />
                         </div>
-                    )}
-                </div>
+
+                        <div>
+                            <label className="block text-[10px] uppercase tracking-widest font-bold text-neutral-400 mb-1 ml-2">
+                                {t.emailLabel}
+                            </label>
+                            <input
+                                required
+                                type="email"
+                                value={formData.email}
+                                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                className="w-full px-5 py-4 rounded-2xl bg-neutral-50 border border-neutral-100 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all font-inter"
+                                placeholder="mario@example.com"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-[10px] uppercase tracking-widest font-bold text-neutral-400 mb-1 ml-2">
+                                {t.phoneLabel}
+                            </label>
+                            <input
+                                required
+                                type="tel"
+                                value={formData.phone}
+                                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                                className="w-full px-5 py-4 rounded-2xl bg-neutral-50 border border-neutral-100 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all font-inter"
+                                placeholder="+39 333 1234567"
+                            />
+                        </div>
+
+                        <div className="flex items-start gap-3 pt-2 mb-2 px-2">
+                            <input
+                                required
+                                type="checkbox"
+                                id="privacy"
+                                checked={acceptedPrivacy}
+                                onChange={(e) => setAcceptedPrivacy(e.target.checked)}
+                                className="mt-1 h-4 w-4 rounded border-neutral-300 text-brand-primary focus:ring-brand-primary cursor-pointer"
+                            />
+                            <label htmlFor="privacy" className="text-[11px] text-neutral-500 font-inter cursor-pointer leading-relaxed">
+                                {t.privacyLabel}
+                            </label>
+                        </div>
+
+                        <button
+                            type="submit"
+                            disabled={!acceptedPrivacy}
+                            className={`w-full py-4 rounded-2xl font-bold font-apfel text-white shadow-xl transition-all ${acceptedPrivacy ? 'bg-brand-primary hover:scale-[1.02] active:scale-95' : 'bg-neutral-300'}`}
+                        >
+                            {t.submitButton}
+                        </button>
+                    </form>
+                </motion.div>
             </div>
-        </div>
+        </AnimatePresence>
     );
 }
