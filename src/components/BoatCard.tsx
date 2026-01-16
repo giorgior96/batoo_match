@@ -82,15 +82,15 @@ export function BoatCard({ boat, onSwipe, style, drag = false }: BoatCardProps) 
                     <>
                         <motion.div
                             style={{ opacity: likeOpacity }}
-                            className="absolute top-12 left-8 z-[60] border-[6px] border-[#22c55e] rounded-2xl px-6 py-2 -rotate-12 bg-white/40 backdrop-blur-md shadow-2xl pointer-events-none"
+                            className="absolute top-12 left-8 z-[60] border-[6px] border-[#007fff] rounded-2xl px-6 py-2 -rotate-12 bg-white/40 backdrop-blur-md shadow-2xl pointer-events-none"
                         >
-                            <span className="text-5xl font-apfel font-extrabold text-[#22c55e] uppercase tracking-widest drop-shadow-sm">LIKE</span>
+                            <span className="text-5xl font-apfel font-extrabold text-[#007fff] uppercase tracking-widest drop-shadow-sm">LIKE</span>
                         </motion.div>
                         <motion.div
                             style={{ opacity: nopeOpacity }}
-                            className="absolute top-12 right-8 z-[60] border-[6px] border-[#ef4444] rounded-2xl px-6 py-2 rotate-12 bg-white/40 backdrop-blur-md shadow-2xl pointer-events-none"
+                            className="absolute top-12 right-8 z-[60] border-[6px] border-[#121A54] rounded-2xl px-6 py-2 rotate-12 bg-white/40 backdrop-blur-md shadow-2xl pointer-events-none"
                         >
-                            <span className="text-5xl font-apfel font-extrabold text-[#ef4444] uppercase tracking-widest drop-shadow-sm">NOPE</span>
+                            <span className="text-5xl font-apfel font-extrabold text-[#121A54] uppercase tracking-widest drop-shadow-sm">NOPE</span>
                         </motion.div>
                     </>
                 )}
@@ -115,15 +115,28 @@ export function BoatCard({ boat, onSwipe, style, drag = false }: BoatCardProps) 
                         draggable={false}
                     />
 
-                    {/* View More Button */}
-                    <div className="absolute bottom-4 right-4 z-40">
+                    {/* Image Actions */}
+                    <div className="absolute bottom-4 left-4 right-4 z-40 flex justify-between items-center">
                         <button
                             onClick={handleViewMore}
-                            className="flex items-center gap-1.5 px-3 py-2 rounded-full bg-black/50 hover:bg-black/70 backdrop-blur-md border border-white/10 transition-all text-white text-[10px] sm:text-xs font-semibold shadow-lg cursor-pointer"
+                            className="flex items-center gap-1.5 px-3 py-2 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-md border border-white/10 transition-all text-white text-[10px] sm:text-xs font-semibold shadow-lg cursor-pointer"
                         >
                             {loadingGallery ? <Loader2 size={14} className="animate-spin" /> : <Images size={14} />}
                             <span>{t.viewMore}</span>
                         </button>
+
+                        <a
+                            href={`https://batoo.it/it/barche-usate/${boat.BoatType === 'M' ? 'motoryacht' :
+                                    boat.BoatType === 'V' ? 'sailboats' :
+                                        boat.BoatType === 'G' ? 'inflatable' : 'barche'
+                                }/${(boat.Builder + "-" + boat.Model).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')}/${boat.BoatID}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1.5 px-3 py-2 rounded-full bg-white/90 hover:bg-white backdrop-blur-md border border-neutral-200 transition-all text-[#121A54] text-[10px] sm:text-xs font-bold shadow-lg"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <span>{t.viewDetails}</span>
+                        </a>
                     </div>
                 </div>
 
@@ -131,7 +144,7 @@ export function BoatCard({ boat, onSwipe, style, drag = false }: BoatCardProps) 
                 <div className="flex-1 p-5 sm:p-6 flex flex-col bg-white">
                     <div className="flex flex-col gap-0.5 mb-3">
                         <div className="flex justify-between items-start">
-                            <h2 className="text-2xl sm:text-3xl font-bold font-apfel text-neutral-900 leading-tight">
+                            <h2 className="text-2xl sm:text-3xl font-bold font-apfel text-black leading-tight">
                                 {boat.Builder}
                             </h2>
                             <span className="px-2 py-1 rounded-lg text-[10px] font-bold bg-neutral-100 text-neutral-500 font-inter">
@@ -141,7 +154,7 @@ export function BoatCard({ boat, onSwipe, style, drag = false }: BoatCardProps) 
                         <h3 className="text-lg sm:text-xl font-medium text-neutral-500 font-apfel -mt-1 uppercase tracking-tight">
                             {boat.Model}
                         </h3>
-                        <p className="text-xl sm:text-2xl font-bold text-neutral-900 font-inter tracking-tight mt-1">
+                        <p className="text-xl sm:text-2xl font-black text-black font-inter tracking-tight mt-1">
                             {boat.SellPrice && boat.SellPrice > 0
                                 ? `€ ${boat.SellPrice.toLocaleString()}`
                                 : "Price on Request"}

@@ -147,17 +147,17 @@ export function Deck({ initialBoats }: DeckProps) {
             </div>
 
             {/* Controls */}
-            <div className="flex items-center gap-6 mt-10">
+            <div className="flex items-center gap-8 mt-10">
                 <button
                     onClick={() => handleSwipe("left")}
-                    className="flex items-center justify-center w-16 h-16 rounded-full bg-white shadow-xl text-[#ef4444] hover:bg-neutral-50 hover:scale-110 active:scale-95 transition-all duration-200 border border-neutral-100"
+                    className="flex items-center justify-center w-16 h-16 rounded-full bg-white shadow-xl text-[#121A54] hover:bg-neutral-50 hover:scale-110 active:scale-95 transition-all duration-200 border border-neutral-100"
                 >
                     <X size={32} strokeWidth={2.5} />
                 </button>
 
                 <button
                     onClick={() => handleSwipe("right")}
-                    className="flex items-center justify-center w-20 h-20 rounded-full bg-[#ec4899] shadow-xl shadow-[#ec4899]/30 text-white hover:bg-[#ec4899]/90 hover:scale-110 active:scale-95 transition-all duration-200"
+                    className="flex items-center justify-center w-20 h-20 rounded-full bg-[#007fff] shadow-xl shadow-[#007fff]/30 text-white hover:bg-[#0066cc] hover:scale-110 active:scale-95 transition-all duration-200"
                 >
                     <Heart size={36} fill="currentColor" className="drop-shadow-sm" />
                 </button>
