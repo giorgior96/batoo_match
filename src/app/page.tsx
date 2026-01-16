@@ -1,6 +1,8 @@
 import { getBoats } from "@/lib/api";
 import { Deck } from "@/components/Deck";
 
+export const dynamic = 'force-dynamic';
+
 export default async function Home() {
   // Load first 50 boats (API max per page)
   // Force "Exploration Mode" defaults for SSR: <= 15m and Random Order
