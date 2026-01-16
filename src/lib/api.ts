@@ -1,10 +1,10 @@
 import { Boat, BoatResponse } from './types';
 
-export async function getBoats(page: number = 1, pageSize: number = 50): Promise<Boat[]> {
+export async function getBoats(page: number = 1, pageSize: number = 50, initialFilters: Record<string, string> = {}): Promise<Boat[]> {
     try {
         // --- 1. DETERMINE USER STATE & FILTERS ---
         let actualPage = page;
-        let filters: Record<string, string> = {};
+        let filters: Record<string, string> = { ...initialFilters };
         let isSmartMode = false;
         let learnedPrefs: any = null;
         let totalSwipes = 0;
@@ -21,8 +21,7 @@ export async function getBoats(page: number = 1, pageSize: number = 50): Promise
                 // START SMALL: User request to start with boats <= 15m
                 if (totalSwipes < 30) {
                     filters.lengthTo = '15';
-                    // Optional: remove price constraints to see full range of small boats
-                    // or keep a loose cap if needed. For now, just length as requested.
+                    filters.orderBy = 'Random'; // Mix sizes, don't just show 15m first
                 }
                 // PHASE 2: SMART PERSONALIZATION (> 5 Likes)
                 else if (learnedPrefs && analytics.likes >= 5) {

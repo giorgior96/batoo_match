@@ -3,7 +3,8 @@ import { Deck } from "@/components/Deck";
 
 export default async function Home() {
   // Load first 50 boats (API max per page)
-  const boats = await getBoats(1, 50);
+  // Force "Exploration Mode" defaults for SSR: <= 15m and Random Order
+  const boats = await getBoats(1, 50, { lengthTo: '15', orderBy: 'Random' });
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-neutral-50 overflow-hidden">
