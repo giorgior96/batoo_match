@@ -24,30 +24,6 @@ export function Deck({ initialBoats }: DeckProps) {
     const [hasMore, setHasMore] = useState(true);
     const [seenBoatIds] = useState<Set<string>>(new Set(initialBoats.map(b => b.BoatID)));
 
-    // Daily Limit State
-    const [dailyLikes, setDailyLikes] = useState(0);
-    const [limitReached, setLimitReached] = useState(false);
-    const DAILY_LIMIT = 10;
-
-    // Check Daily Limit on Mount
-    useEffect(() => {
-        if (typeof window !== 'undefined') {
-            const today = new Date().toISOString().split('T')[0];
-            const stored = localStorage.getItem('batoo_daily_likes');
-            if (stored) {
-                const data = JSON.parse(stored);
-                if (data.date === today) {
-                    setDailyLikes(data.count);
-                    if (data.count >= DAILY_LIMIT) setLimitReached(true);
-                } else {
-                    // Reset for new day
-                    localStorage.setItem('batoo_daily_likes', JSON.stringify({ date: today, count: 0 }));
-                    setDailyLikes(0);
-                }
-            }
-        }
-    }, []);
-
     // ... (rest of loading effect) ...
     // Fetch more boats logic
     useEffect(() => {
@@ -84,15 +60,6 @@ export function Deck({ initialBoats }: DeckProps) {
     }, [currentIndex, boats.length, loading, page, hasMore, seenBoatIds]);
 
     const handleSwipe = (direction: "left" | "right") => {
-
-        // CHECK LIMIT
-        if (direction === 'right') {
-            if (dailyLikes >= DAILY_LIMIT) {
-                setLimitReached(true);
-                return; // Block swipe
-            }
-        }
-
         setLastDirection(direction);
         const currentBoat = boats[currentIndex];
 
@@ -102,18 +69,6 @@ export function Deck({ initialBoats }: DeckProps) {
         recordSwipe(currentBoat, direction);
 
         if (direction === "right") {
-            // Update Limit
-            const newCount = dailyLikes + 1;
-            setDailyLikes(newCount);
-            if (typeof window !== 'undefined') {
-                const today = new Date().toISOString().split('T')[0];
-                localStorage.setItem('batoo_daily_likes', JSON.stringify({ date: today, count: newCount }));
-            }
-            if (newCount >= DAILY_LIMIT) {
-                setLimitReached(true);
-                // Don't return here, let the animation finish for this last swipe
-            }
-
             // === AUTO-EMAIL LOGIC ===
             let userData = null;
             if (typeof window !== 'undefined') {
@@ -152,19 +107,6 @@ export function Deck({ initialBoats }: DeckProps) {
         );
     }
 
-    // LIMIT REACHED OVERLAY
-    if (limitReached) {
-        return (
-            <div className="flex flex-col items-center justify-center h-screen bg-neutral-50 p-8 text-center animate-in fade-in">
-                <div className="w-20 h-20 bg-brand-primary/10 rounded-full flex items-center justify-center mb-6 text-brand-primary">
-                    <Heart size={40} className="fill-brand-primary" />
-                </div>
-                <h2 className="text-2xl font-bold font-apfel mb-2 text-neutral-800">{t.limitReachedTitle}</h2>
-                <p className="text-neutral-500 mb-8 font-inter">{t.limitReachedSubtitle}</p>
-                <div className="text-sm font-semibold text-neutral-400 uppercase tracking-widest">Batoo Match</div>
-            </div>
-        );
-    }
 
     return (
         <div className="flex flex-col items-center h-full w-full max-w-md mx-auto relative pt-0 pb-8 px-4">
