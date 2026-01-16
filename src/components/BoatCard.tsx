@@ -33,7 +33,8 @@ export function BoatCard({ boat, onSwipe, style, drag = false }: BoatCardProps) 
 
     const secureUrl = (url: string | undefined) => {
         if (!url) return "/placeholder.jpg";
-        return url.replace('http://', 'https://');
+        // Use internal proxy to bypass SSL/Mixed Content issues
+        return `/api/image-proxy?url=${encodeURIComponent(url)}`;
     };
 
     const image = secureUrl(boat.ImagesList?.[0]?.ImageUrl);
