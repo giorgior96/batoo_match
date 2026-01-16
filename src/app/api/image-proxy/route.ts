@@ -43,9 +43,9 @@ export async function GET(request: NextRequest) {
             status: 200,
             headers: {
                 'Content-Type': contentType,
-                // CACHE: Private/No-Cache for the server (Netlify/Vercel) to avoid cross-user duplication.
-                // PUBLIC/Immutable for the BROWSER so it can cache locally and be fast.
-                'Cache-Control': 'public, max-age=31536000, immutable',
+                // CACHE: 'private' is critical for Netlify/CDNs to avoid serving the same image for different URLs.
+                // It prevents the CDN from caching, but allows the BROWSER to cache locally for speed.
+                'Cache-Control': 'private, max-age=31536000, immutable',
                 'X-Content-Type-Options': 'nosniff'
             },
         });
