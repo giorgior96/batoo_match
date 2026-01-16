@@ -22,6 +22,11 @@ export default function RootLayout({
     <html lang="en">
       <body className="antialiased font-sans">
         {children}
+        <div className="fixed top-4 right-4 z-50 pointer-events-none">
+          <div className="bg-black/80 backdrop-blur-md border border-white/10 text-white text-[10px] uppercase font-bold px-3 py-1 rounded-full shadow-lg">
+            Beta
+          </div>
+        </div>
       </body>
     </html>
   );
