@@ -80,11 +80,17 @@ export function BoatCard({ boat, onSwipe, style, drag = false }: BoatCardProps) 
                 {/* Indicators */}
                 {drag && (
                     <>
-                        <motion.div style={{ opacity: likeOpacity }} className="absolute top-8 left-8 z-20 border-4 border-[#22c55e] rounded-xl px-4 py-1 -rotate-12 bg-white/20 backdrop-blur-sm">
-                            <span className="text-3xl font-apfel font-bold text-[#22c55e] uppercase tracking-wide">LIKE</span>
+                        <motion.div
+                            style={{ opacity: likeOpacity }}
+                            className="absolute top-12 left-8 z-[60] border-[6px] border-[#22c55e] rounded-2xl px-6 py-2 -rotate-12 bg-white/40 backdrop-blur-md shadow-2xl"
+                        >
+                            <span className="text-5xl font-apfel font-extrabold text-[#22c55e] uppercase tracking-widest drop-shadow-sm">LIKE</span>
                         </motion.div>
-                        <motion.div style={{ opacity: nopeOpacity }} className="absolute top-8 right-8 z-20 border-4 border-[#ef4444] rounded-xl px-4 py-1 rotate-12 bg-white/20 backdrop-blur-sm">
-                            <span className="text-3xl font-apfel font-bold text-[#ef4444] uppercase tracking-wide">NOPE</span>
+                        <motion.div
+                            style={{ opacity: nopeOpacity }}
+                            className="absolute top-12 right-8 z-[60] border-[6px] border-[#ef4444] rounded-2xl px-6 py-2 rotate-12 bg-white/40 backdrop-blur-md shadow-2xl"
+                        >
+                            <span className="text-5xl font-apfel font-extrabold text-[#ef4444] uppercase tracking-widest drop-shadow-sm">NOPE</span>
                         </motion.div>
                     </>
                 )}

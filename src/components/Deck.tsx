@@ -114,8 +114,10 @@ export function Deck({ initialBoats }: DeckProps) {
             <UserOnboarding />
 
             {/* Header / Logo */}
-            <div className="w-full h-20 flex items-center justify-center mb-6">
-                <img src="/batoo-logo-dark.svg" alt="Batoo Logo" className="h-8 object-contain" />
+            <div className="w-full h-20 flex items-center justify-center gap-3 mb-4">
+                <img src="/batoo-logo-dark.svg" alt="Batoo Logo" className="h-7 object-contain" />
+                <div className="h-6 w-[1px] bg-neutral-200" />
+                <span className="text-xl font-bold font-apfel tracking-tight text-neutral-800">Match</span>
             </div>
 
             {/* Cards Stack */}
