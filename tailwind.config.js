@@ -1,0 +1,152 @@
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+    content: [
+        "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
+        "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
+        "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    ],
+    theme: {
+        extend: {
+            animation: {
+                'pulse-slow': 'pulse 6s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            },
+            zIndex: {
+                999999: "999999",
+            },
+            fontFamily: {
+                apfel: [
+                    "Apfel Grotezk",
+                    "-apple-system",
+                    "BlinkMacSystemFont",
+                    "Segoe UI",
+                    "Roboto",
+                    "sans-serif",
+                ],
+                bricolage: [
+                    "Bricolage Grotesque",
+                    "-apple-system",
+                    "BlinkMacSystemFont",
+                    "Segoe UI",
+                    "Roboto",
+                    "sans-serif",
+                ],
+                abeezee: [
+                    "ABeeZee",
+                    "-apple-system",
+                    "BlinkMacSystemFont",
+                    "Segoe UI",
+                    "Roboto",
+                    "sans-serif",
+                ],
+                inter: [
+                    "Inter",
+                    "-apple-system",
+                    "BlinkMacSystemFont",
+                    "Segoe UI",
+                    "Roboto",
+                    "sans-serif",
+                ],
+                sans: [
+                    "Inter",
+                    "-apple-system",
+                    "BlinkMacSystemFont",
+                    "Segoe UI",
+                    "Roboto",
+                    "sans-serif",
+                ],
+                heading: [
+                    "Bricolage Grotesque",
+                    "-apple-system",
+                    "BlinkMacSystemFont",
+                    "Segoe UI",
+                    "Roboto",
+                    "sans-serif",
+                ],
+            },
+            fontWeight: {
+                light: "300",
+                normal: "400",
+                medium: "500",
+                semibold: "600",
+                bold: "700",
+            },
+            fontVariationSettings: {
+                bricolage: "'opsz' 14, 'wdth' 100",
+            },
+            colors: {
+                primary: {
+                    50: "#ebf4ff",
+                    100: "#daebff",
+                    200: "#bdd8ff",
+                    300: "#95bcff",
+                    400: "#6b95ff",
+                    500: "#486eff",
+                    600: "#2842ff",
+                    700: "#1d33e5",
+                    800: "#1a2db9",
+                    900: "#1e2e91",
+                    950: "#121a54",
+                },
+                accent: {
+                    50: "#edfaff",
+                    100: "#d6f3ff",
+                    200: "#b5ebff",
+                    300: "#83e1ff",
+                    400: "#48ceff",
+                    500: "#1eb0ff",
+                    600: "#0693ff",
+                    700: "#007fff",
+                    800: "#0861c5",
+                    900: "#0d549b",
+                    950: "#0e335d",
+                },
+                neutral: {
+                    50: "#f6f6f6",
+                    100: "#e7e7e7",
+                    200: "#d1d1d1",
+                    300: "#b0b0b0",
+                    400: "#888888",
+                    500: "#6d6d6d",
+                    600: "#5d5d5d",
+                    700: "#4f4f4f",
+                    800: "#454545",
+                    900: "#3d3d3d",
+                    950: "#000000",
+                },
+                brand: {
+                    primary: "#007fff", // Azure Action Color
+                    secondary: "#121A54", // Dark Blue Brand Color
+                    "primary-light": "#48ceff",
+                    "primary-dark": "#0066cc",
+                    "surface-dark": "#121A54",
+                },
+                surface: {
+                    primary: "#ffffff",
+                    secondary: "#f8fafc",
+                    tertiary: "#f1f5f9",
+                    inverse: "#121A54",
+                },
+                text: {
+                    primary: "#121A54", // Use Dark Blue for primary text
+                    secondary: "#475569",
+                    tertiary: "#94a3b8",
+                    inverse: "#ffffff",
+                    disabled: "#cbd5e1",
+                },
+                border: {
+                    primary: "#e2e8f0",
+                    secondary: "#cbd5e1",
+                    focus: "#007fff",
+                    error: "#ef4444",
+                },
+                status: {
+                    success: "#22c55e",
+                    warning: "#f59e0b",
+                    error: "#ef4444",
+                    info: "#3b82f6",
+                },
+            },
+        },
+    },
+    plugins: [],
+};
