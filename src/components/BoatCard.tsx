@@ -75,7 +75,7 @@ export function BoatCard({ boat, onSwipe, style, drag = false }: BoatCardProps) 
                 drag={drag && !showGallery ? "x" : false}
                 dragConstraints={{ left: 0, right: 0 }}
                 onDragEnd={handleDragEnd}
-                className="absolute h-[640px] w-full max-w-sm rounded-[32px] bg-white shadow-2xl overflow-hidden cursor-grab active:cursor-grabbing touch-none select-none border border-neutral-100"
+                className="absolute h-[560px] sm:h-[640px] w-full max-w-sm rounded-[32px] bg-white shadow-2xl overflow-hidden cursor-grab active:cursor-grabbing touch-none select-none border border-neutral-100"
             >
                 {/* Indicators */}
                 {drag && (

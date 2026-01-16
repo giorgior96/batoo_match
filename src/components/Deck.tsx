@@ -119,7 +119,7 @@ export function Deck({ initialBoats }: DeckProps) {
             </div>
 
             {/* Cards Stack */}
-            <div className="relative w-full h-[650px] flex justify-center items-center perspective-1000">
+            <div className="relative w-full h-[570px] sm:h-[650px] flex justify-center items-center perspective-1000">
                 {/* Next Card (Behind) */}
                 {nextBoat && (
                     <div className="absolute top-0 w-full flex justify-center scale-95 opacity-60 pointer-events-none transform translate-y-6">
