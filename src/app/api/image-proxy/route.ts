@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const imageUrl = searchParams.get('url');
@@ -9,45 +11,51 @@ export async function GET(request: NextRequest) {
     }
 
     try {
-        // Tenta di scaricare l'immagine originale
-        // Usiamo un agente che ignora errori SSL se necessario (in fetch nativa di Node a volte serve config extra, 
-        // ma spesso basta fare la richiesta server-side su http o https)
+        // Forza HTTP per il server-side fetch per evitare problemi di certificato SSL
+        // storage.digibusiness.it ha un certificato invalido scatenando ERR_CERT_COMMON_NAME_INVALID
+        const targetUrl = imageUrl.replace('https://', 'http://');
 
-        // Se l'url originale è https ma ha cert invalido, proviamo prima così.
-        // Se fallisce, potremmo dover configurare un custom agent, ma Next.js fetch standard è rigida.
-        // Trucco: Spesso questi server vecchi rispondono bene in HTTP. Il browser blocca HTTP, ma il server Next.js NO.
-        // Quindi se l'url è https, proviamo a forzarlo http se necessario, oppure lo lasciamo così e speriamo che Node accetti il cert.
+        console.log(`Proxying image: ${targetUrl}`);
 
-        // Strategia: Node.js server-side fetch.
-        // Importante: Per bypassare SSL error in dev mode si usa process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
-        // Ma in prod su Vercel/Netlify non possiamo farlo facilmente safe.
-        // Proviamo semplicemente a fetchare l'URL.
-
-        const response = await fetch(imageUrl, {
+        const response = await fetch(targetUrl, {
             headers: {
-                // Fingiamo di essere un browser per evitare blocchi anti-bot
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
             }
         });
 
         if (!response.ok) {
-            console.error(`Failed to fetch image: ${response.status} ${response.statusText}`);
-            return new NextResponse('Failed to fetch image', { status: 502 });
+            // Se fallisce in HTTP, prova HTTPS originale
+            const retryResponse = await fetch(imageUrl, {
+                headers: { 'User-Agent': 'Mozilla/5.0' }
+            });
+
+            if (!retryResponse.ok) {
+                return new NextResponse('Failed to fetch image', { status: 502 });
+            }
+
+            return await serveResponse(retryResponse);
         }
 
-        const arrayBuffer = await response.arrayBuffer();
-        const buffer = Buffer.from(arrayBuffer);
-
-        const headers = new Headers();
-        headers.set('Content-Type', response.headers.get('Content-Type') || 'image/jpeg');
-        headers.set('Cache-Control', 'public, max-age=31536000, immutable');
-
-        return new NextResponse(buffer, {
-            headers
-        });
+        return await serveResponse(response);
 
     } catch (error) {
         console.error('Proxy error:', error);
         return new NextResponse('Internal Proxy Error', { status: 500 });
     }
+}
+
+async function serveResponse(response: Response) {
+    const arrayBuffer = await response.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
+    const headers = new Headers();
+    headers.set('Content-Type', response.headers.get('Content-Type') || 'image/jpeg');
+    // Disabilitiamo il cache-control aggressivo per evitare che vengano servite immagini sbagliate
+    headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    headers.set('Pragma', 'no-cache');
+    headers.set('Expires', '0');
+
+    return new NextResponse(buffer, {
+        headers
+    });
 }
