@@ -43,9 +43,11 @@ export async function GET(request: NextRequest) {
             status: 200,
             headers: {
                 'Content-Type': contentType,
-                // CACHE: 'private' is critical for Netlify/CDNs to avoid serving the same image for different URLs.
-                // It prevents the CDN from caching, but allows the BROWSER to cache locally for speed.
-                'Cache-Control': 'private, max-age=31536000, immutable',
+                // CACHE: 'public' allows Vercel Edge Network to cache this response.
+                // 's-maxage=31536000' tells the CDN to keep it for a year.
+                // 'max-age=31536000' tells the browser to keep it for a year.
+                // This drasticly reduces Serverless Function executions.
+                'Cache-Control': 'public, max-age=31536000, s-maxage=31536000, immutable',
                 'X-Content-Type-Options': 'nosniff'
             },
         });

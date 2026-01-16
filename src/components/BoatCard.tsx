@@ -127,8 +127,8 @@ export function BoatCard({ boat, onSwipe, style, drag = false }: BoatCardProps) 
 
                         <a
                             href={`https://batoo.it/it/barche-usate/${boat.BoatType === 'M' ? 'motoryacht' :
-                                    boat.BoatType === 'V' ? 'sailboats' :
-                                        boat.BoatType === 'G' ? 'inflatable' : 'barche'
+                                boat.BoatType === 'V' ? 'sailboats' :
+                                    boat.BoatType === 'G' ? 'inflatable' : 'barche'
                                 }/${(boat.Builder + "-" + boat.Model).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')}/${boat.BoatID}`}
                             target="_blank"
                             rel="noopener noreferrer"
