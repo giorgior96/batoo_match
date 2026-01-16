@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, PanInfo, useMotionValue, useTransform } from "framer-motion";
+import { motion, PanInfo, useMotionValue, useTransform, AnimatePresence } from "framer-motion";
 import { Boat } from "@/lib/types";
 import { MapPin, Ruler, Images, Loader2, X, ChevronLeft, ChevronRight, Calendar, Anchor } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -75,31 +75,31 @@ export function BoatCard({ boat, onSwipe, style, drag = false }: BoatCardProps) 
                 drag={drag && !showGallery ? "x" : false}
                 dragConstraints={{ left: 0, right: 0 }}
                 onDragEnd={handleDragEnd}
-                className="absolute h-[520px] sm:h-[640px] w-full max-w-[340px] sm:max-w-sm rounded-[32px] bg-white shadow-2xl overflow-hidden cursor-grab active:cursor-grabbing touch-none select-none border border-neutral-100"
+                className="absolute h-[520px] sm:h-[640px] w-full max-w-[340px] sm:max-w-sm rounded-[32px] bg-white shadow-2xl overflow-hidden cursor-grab active:cursor-grabbing touch-none select-none border border-neutral-100 flex flex-col"
             >
-                {/* Indicators */}
+                {/* Indicators - Moved to top z-index for clarity */}
                 {drag && (
                     <>
                         <motion.div
                             style={{ opacity: likeOpacity }}
-                            className="absolute top-12 left-8 z-[60] border-[6px] border-[#22c55e] rounded-2xl px-6 py-2 -rotate-12 bg-white/40 backdrop-blur-md shadow-2xl"
+                            className="absolute top-12 left-8 z-[60] border-[6px] border-[#22c55e] rounded-2xl px-6 py-2 -rotate-12 bg-white/40 backdrop-blur-md shadow-2xl pointer-events-none"
                         >
                             <span className="text-5xl font-apfel font-extrabold text-[#22c55e] uppercase tracking-widest drop-shadow-sm">LIKE</span>
                         </motion.div>
                         <motion.div
                             style={{ opacity: nopeOpacity }}
-                            className="absolute top-12 right-8 z-[60] border-[6px] border-[#ef4444] rounded-2xl px-6 py-2 rotate-12 bg-white/40 backdrop-blur-md shadow-2xl"
+                            className="absolute top-12 right-8 z-[60] border-[6px] border-[#ef4444] rounded-2xl px-6 py-2 rotate-12 bg-white/40 backdrop-blur-md shadow-2xl pointer-events-none"
                         >
                             <span className="text-5xl font-apfel font-extrabold text-[#ef4444] uppercase tracking-widest drop-shadow-sm">NOPE</span>
                         </motion.div>
                     </>
                 )}
 
-                {/* Image Container */}
-                <div className="relative h-full w-full bg-neutral-900 overflow-hidden group">
+                {/* Image Section (Top) */}
+                <div className="relative h-[60%] w-full bg-neutral-50 overflow-hidden group border-b border-neutral-50">
                     {/* Blurry Background */}
                     <div
-                        className="absolute inset-0 opacity-50 blur-3xl scale-125 transition-transform duration-700"
+                        className="absolute inset-0 opacity-20 blur-2xl scale-125 pointer-events-none"
                         style={{
                             backgroundImage: `url(${image})`,
                             backgroundPosition: 'center',
@@ -111,46 +111,46 @@ export function BoatCard({ boat, onSwipe, style, drag = false }: BoatCardProps) 
                     <img
                         src={image}
                         alt={`${boat.Builder} ${boat.Model}`}
-                        className="relative h-full w-full object-contain pointer-events-none z-10"
+                        className="relative h-full w-full object-contain p-2 z-10 pointer-events-none"
                         draggable={false}
                     />
 
-                    {/* Gradients */}
-                    <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/60 to-transparent z-20" />
-                    <div className="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-brand-secondary via-brand-secondary/80 to-transparent z-20" />
-
                     {/* View More Button */}
-                    <div className="absolute top-4 left-4 z-40">
+                    <div className="absolute bottom-4 right-4 z-40">
                         <button
                             onClick={handleViewMore}
-                            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/20 transition-all text-white text-[10px] sm:text-xs font-semibold shadow-lg cursor-pointer"
+                            className="flex items-center gap-1.5 px-3 py-2 rounded-full bg-black/50 hover:bg-black/70 backdrop-blur-md border border-white/10 transition-all text-white text-[10px] sm:text-xs font-semibold shadow-lg cursor-pointer"
                         >
                             {loadingGallery ? <Loader2 size={14} className="animate-spin" /> : <Images size={14} />}
                             <span>{t.viewMore}</span>
                         </button>
                     </div>
 
-                    {/* Badges */}
-                    <div className="absolute top-4 right-4 flex flex-col gap-2 z-30">
-                        {boat.New && (
-                            <span className="px-3 py-1 rounded-full text-xs font-bold bg-brand-primary text-white shadow-lg font-inter">
+                    {/* New Badge */}
+                    {boat.New && (
+                        <div className="absolute top-4 left-4 z-30">
+                            <span className="px-3 py-1 rounded-full text-[10px] font-bold bg-brand-primary text-white shadow-lg font-inter">
                                 NEW
                             </span>
-                        )}
-                        <span className="px-3 py-1 rounded-full text-xs font-bold bg-black/40 backdrop-blur-md text-white border border-white/10 shadow-lg font-inter">
-                            {boat.YearBuilt}
-                        </span>
-                    </div>
-
+                        </div>
+                    )}
                 </div>
 
-                {/* Content */}
-                <div className="absolute bottom-0 inset-x-0 p-6 flex flex-col justify-end pb-8 z-30">
-                    <div className="flex flex-col gap-0.5 mb-2">
-                        <h2 className="text-2xl sm:text-3xl font-bold font-apfel text-white leading-tight drop-shadow-md">
-                            {boat.Builder} <span className="font-normal opacity-90">{boat.Model}</span>
-                        </h2>
-                        <p className="text-xl sm:text-2xl font-bold text-sky-400 drop-shadow-md font-inter tracking-tight">
+                {/* Content Section (Bottom) */}
+                <div className="flex-1 p-5 sm:p-6 flex flex-col bg-white">
+                    <div className="flex flex-col gap-0.5 mb-3">
+                        <div className="flex justify-between items-start">
+                            <h2 className="text-2xl sm:text-3xl font-bold font-apfel text-neutral-900 leading-tight">
+                                {boat.Builder}
+                            </h2>
+                            <span className="px-2 py-1 rounded-lg text-[10px] font-bold bg-neutral-100 text-neutral-500 font-inter">
+                                {boat.YearBuilt}
+                            </span>
+                        </div>
+                        <h3 className="text-lg sm:text-xl font-medium text-neutral-500 font-apfel -mt-1 uppercase tracking-tight">
+                            {boat.Model}
+                        </h3>
+                        <p className="text-xl sm:text-2xl font-bold text-neutral-900 font-inter tracking-tight mt-1">
                             {boat.SellPrice && boat.SellPrice > 0
                                 ? `€ ${boat.SellPrice.toLocaleString()}`
                                 : "Price on Request"}
@@ -158,31 +158,23 @@ export function BoatCard({ boat, onSwipe, style, drag = false }: BoatCardProps) 
                     </div>
 
                     {/* Specs Grid */}
-                    <div className="grid grid-cols-2 gap-1.5 text-[11px] sm:text-sm text-white/90 font-inter mt-2">
-                        {/* Row 1 */}
+                    <div className="grid grid-cols-2 gap-2 text-[11px] sm:text-sm text-neutral-600 font-inter mt-auto">
                         {(boat.Length || 0) > 0 && (
-                            <div className="flex items-center gap-1.5 bg-white/10 rounded-lg px-2 py-1.5 backdrop-blur-sm border border-white/10">
-                                <Ruler size={12} className="text-brand-primary-light" />
-                                <span className="truncate">{boat.Length}m Length</span>
+                            <div className="flex items-center gap-2 bg-neutral-50 rounded-xl px-3 py-2.5 border border-neutral-100">
+                                <Ruler size={14} className="text-neutral-400" />
+                                <span className="truncate">{boat.Length}m</span>
                             </div>
                         )}
-                        <div className="flex items-center gap-1.5 bg-white/10 rounded-lg px-2 py-1.5 backdrop-blur-sm border border-white/10">
-                            <Calendar size={12} className="text-brand-primary-light" />
-                            <span>{boat.YearBuilt}</span>
-                        </div>
-
-                        {/* Row 2 */}
-                        {(boat.Country || boat.City) && (
-                            <div className="flex items-center gap-1.5 bg-white/10 rounded-lg px-2 py-1.5 backdrop-blur-sm border border-white/10 truncate">
-                                <MapPin size={12} className="text-brand-primary-light" />
-                                <span className="truncate">{boat.City || boat.Country}</span>
-                            </div>
-                        )}
-
                         {(boat.Cabins || 0) > 0 && (
-                            <div className="flex items-center gap-1.5 bg-white/10 rounded-lg px-2 py-1.5 backdrop-blur-sm border border-white/10">
-                                <Anchor size={12} className="text-brand-primary-light" />
+                            <div className="flex items-center gap-2 bg-neutral-50 rounded-xl px-3 py-2.5 border border-neutral-100">
+                                <Anchor size={14} className="text-neutral-400" />
                                 <span>{boat.Cabins} Cabins</span>
+                            </div>
+                        )}
+                        {(boat.Country || boat.City) && (
+                            <div className="flex items-center gap-2 bg-neutral-50 rounded-xl px-3 py-2.5 border border-neutral-100 truncate col-span-2">
+                                <MapPin size={14} className="text-neutral-400" />
+                                <span className="truncate">{boat.City || boat.Country}</span>
                             </div>
                         )}
                     </div>
@@ -206,6 +198,14 @@ function GalleryOverlay({ images, onClose, title }: { images: any[], onClose: ()
 
     const next = () => setIndex((i) => (i + 1) % images.length);
     const prev = () => setIndex((i) => (i - 1 + images.length) % images.length);
+
+    const handleDragEnd = (e: any, info: PanInfo) => {
+        if (info.offset.x > 50) {
+            prev();
+        } else if (info.offset.x < -50) {
+            next();
+        }
+    };
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
@@ -239,26 +239,40 @@ function GalleryOverlay({ images, onClose, title }: { images: any[], onClose: ()
                 </button>
             </div>
 
-            {/* Main Image */}
-            <div className="flex-1 relative flex items-center justify-center overflow-hidden bg-black">
-                <div className="relative w-full h-full flex items-center justify-center p-2">
-                    <img
-                        src={images[index].url}
-                        alt=""
-                        className="max-w-full max-h-full object-contain shadow-2xl"
-                    />
-                </div>
+            {/* Main Image with Swipe */}
+            <div className="flex-1 relative flex items-center justify-center overflow-hidden bg-black touch-none">
+                <AnimatePresence mode="wait">
+                    <motion.div
+                        key={index}
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -20 }}
+                        transition={{ duration: 0.2 }}
+                        drag="x"
+                        dragConstraints={{ left: 0, right: 0 }}
+                        onDragEnd={handleDragEnd}
+                        className="relative w-full h-full flex items-center justify-center p-2"
+                    >
+                        <img
+                            src={images[index].url}
+                            alt=""
+                            className="max-w-full max-h-full object-contain shadow-2xl pointer-events-none"
+                            draggable={false}
+                        />
+                    </motion.div>
+                </AnimatePresence>
 
+                {/* Arrow Controls (Hidden on mobile touch but available for desktop) */}
                 <button
                     onClick={(e) => { e.stopPropagation(); prev(); }}
-                    className="absolute left-2 top-1/2 -translate-y-1/2 p-3 bg-black/50 hover:bg-black/70 rounded-full text-white backdrop-blur-sm transition-all"
+                    className="absolute left-2 top-1/2 -translate-y-1/2 p-3 bg-black/50 hover:bg-black/70 rounded-full text-white backdrop-blur-sm transition-all hidden sm:flex"
                 >
                     <ChevronLeft size={32} />
                 </button>
 
                 <button
                     onClick={(e) => { e.stopPropagation(); next(); }}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 p-3 bg-black/50 hover:bg-black/70 rounded-full text-white backdrop-blur-sm transition-all"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 p-3 bg-black/50 hover:bg-black/70 rounded-full text-white backdrop-blur-sm transition-all hidden sm:flex"
                 >
                     <ChevronRight size={32} />
                 </button>
