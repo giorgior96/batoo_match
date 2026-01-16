@@ -15,6 +15,7 @@ export function UserOnboarding() {
         phone: ""
     });
     const [acceptedPrivacy, setAcceptedPrivacy] = useState(false);
+    const [acceptedBroker, setAcceptedBroker] = useState(false);
 
     useEffect(() => {
         const stored = localStorage.getItem(USER_DATA_KEY);
@@ -25,8 +26,12 @@ export function UserOnboarding() {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        // Broker contact is now optional, only privacy is required
         if (formData.name && formData.email && formData.phone && acceptedPrivacy) {
-            localStorage.setItem(USER_DATA_KEY, JSON.stringify(formData));
+            localStorage.setItem(USER_DATA_KEY, JSON.stringify({
+                ...formData,
+                acceptedBroker // Store preference
+            }));
             setIsOpen(false);
         }
     };
@@ -41,8 +46,8 @@ export function UserOnboarding() {
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     className="bg-white rounded-[32px] p-8 w-full max-w-md shadow-2xl overflow-hidden relative"
                 >
-                    {/* Brand Accents */}
-                    <div className="absolute top-0 inset-x-0 h-2 bg-gradient-to-r from-brand-primary to-sky-400" />
+                    {/* Brand Accent */}
+                    <div className="absolute top-0 inset-x-0 h-2 bg-[#121A54]" />
 
                     <div className="flex flex-col items-center text-center mb-8">
                         <img src="/batoo-logo-dark.svg" alt="Batoo Logo" className="h-8 mb-6" />
@@ -64,7 +69,7 @@ export function UserOnboarding() {
                                 type="text"
                                 value={formData.name}
                                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                className="w-full px-5 py-4 rounded-2xl bg-neutral-50 border border-neutral-100 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all font-inter"
+                                className="w-full px-5 py-4 rounded-2xl bg-neutral-50 border border-neutral-100 focus:outline-none focus:ring-2 focus:ring-[#121A54]/20 focus:border-[#121A54] transition-all font-inter text-neutral-900"
                                 placeholder="Mario Rossi"
                             />
                         </div>
@@ -78,7 +83,7 @@ export function UserOnboarding() {
                                 type="email"
                                 value={formData.email}
                                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                className="w-full px-5 py-4 rounded-2xl bg-neutral-50 border border-neutral-100 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all font-inter"
+                                className="w-full px-5 py-4 rounded-2xl bg-neutral-50 border border-neutral-100 focus:outline-none focus:ring-2 focus:ring-[#121A54]/20 focus:border-[#121A54] transition-all font-inter text-neutral-900"
                                 placeholder="mario@example.com"
                             />
                         </div>
@@ -92,29 +97,53 @@ export function UserOnboarding() {
                                 type="tel"
                                 value={formData.phone}
                                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                                className="w-full px-5 py-4 rounded-2xl bg-neutral-50 border border-neutral-100 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all font-inter"
+                                className="w-full px-5 py-4 rounded-2xl bg-neutral-50 border border-neutral-100 focus:outline-none focus:ring-2 focus:ring-[#121A54]/20 focus:border-[#121A54] transition-all font-inter text-neutral-900"
                                 placeholder="+39 333 1234567"
                             />
                         </div>
 
-                        <div className="flex items-start gap-3 pt-2 mb-2 px-2">
-                            <input
-                                required
-                                type="checkbox"
-                                id="privacy"
-                                checked={acceptedPrivacy}
-                                onChange={(e) => setAcceptedPrivacy(e.target.checked)}
-                                className="mt-1 h-4 w-4 rounded border-neutral-300 text-brand-primary focus:ring-brand-primary cursor-pointer"
-                            />
-                            <label htmlFor="privacy" className="text-[11px] text-neutral-500 font-inter cursor-pointer leading-relaxed">
-                                {t.privacyLabel}
-                            </label>
+                        <div className="space-y-3 pt-2">
+                            {/* Privacy Checkbox (REQUIRED) */}
+                            <div className="flex items-start gap-3 p-3 rounded-xl bg-neutral-50 border border-neutral-100 hover:border-neutral-200 transition-colors">
+                                <div className="flex items-center h-5">
+                                    <input
+                                        required
+                                        type="checkbox"
+                                        id="privacy"
+                                        checked={acceptedPrivacy}
+                                        onChange={(e) => setAcceptedPrivacy(e.target.checked)}
+                                        className="h-5 w-5 rounded border-neutral-300 text-[#121A54] focus:ring-[#121A54] cursor-pointer"
+                                    />
+                                </div>
+                                <label htmlFor="privacy" className="text-[11px] text-neutral-600 font-inter cursor-pointer leading-tight">
+                                    {t.privacyAgreement}
+                                </label>
+                            </div>
+
+                            {/* Broker Checkbox (OPTIONAL) */}
+                            <div className="flex items-start gap-3 p-3 rounded-xl bg-[#121A54]/5 border border-[#121A54]/10 hover:border-[#121A54]/20 transition-colors">
+                                <div className="flex items-center h-5">
+                                    <input
+                                        type="checkbox"
+                                        id="broker"
+                                        checked={acceptedBroker}
+                                        onChange={(e) => setAcceptedBroker(e.target.checked)}
+                                        className="h-5 w-5 rounded border-neutral-300 text-[#121A54] focus:ring-[#121A54] cursor-pointer"
+                                    />
+                                </div>
+                                <label htmlFor="broker" className="text-[11px] text-[#121A54] font-semibold font-inter cursor-pointer leading-tight">
+                                    {t.brokerAgreement}
+                                </label>
+                            </div>
                         </div>
 
                         <button
                             type="submit"
                             disabled={!acceptedPrivacy}
-                            className={`w-full py-4 rounded-2xl font-bold font-apfel text-white shadow-xl transition-all ${acceptedPrivacy ? 'bg-brand-primary hover:scale-[1.02] active:scale-95' : 'bg-neutral-300'}`}
+                            className={`w-full py-4 rounded-2xl font-bold font-apfel text-white shadow-xl transition-all duration-300 mt-2 ${acceptedPrivacy
+                                    ? 'bg-[#121A54] hover:bg-[#1a2575] hover:scale-[1.02] active:scale-95 shadow-[#121A54]/30'
+                                    : 'bg-neutral-200 cursor-not-allowed text-neutral-400 shadow-none'
+                                }`}
                         >
                             {t.submitButton}
                         </button>

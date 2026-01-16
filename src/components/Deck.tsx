@@ -79,13 +79,15 @@ export function Deck({ initialBoats }: DeckProps) {
             }
 
             if (userData) {
-                const brokerEmail = currentBoat.AgencyEmail || 'info@batoo.it';
-                console.log(`📨 [MOCK EMAIL] To: ${brokerEmail}`);
-                console.log(`Subject: New Lead for ${currentBoat.Builder} ${currentBoat.Model}`);
-                console.log(`Body: User ${userData.name} (${userData.email}, ${userData.phone}) is interested in this boat.`);
+                if (userData.acceptedBroker) {
+                    const brokerEmail = currentBoat.AgencyEmail || 'info@batoo.it';
+                    console.log(`📨 [SENDING LEAD] To: ${brokerEmail}`);
 
-                // Trigger API call here
-                contactBroker(currentBoat, userData);
+                    // Trigger API call here
+                    contactBroker(currentBoat, userData);
+                } else {
+                    console.log("ℹ️ User liked boat but opted out of broker contact.");
+                }
             } else {
                 console.warn("⚠️ User liked a boat but no contact info found (Onboarding skipped?)");
             }
