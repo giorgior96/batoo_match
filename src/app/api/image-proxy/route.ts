@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-export const dynamic = 'force-dynamic';
+// Rimuoviamo force-dynamic per permettere il caching a livello di Edge
+export const revalidate = 3600; // Cache a livello server per 1 ora
 
 export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
@@ -11,51 +12,38 @@ export async function GET(request: NextRequest) {
     }
 
     try {
-        // Forza HTTP per il server-side fetch per evitare problemi di certificato SSL
-        // storage.digibusiness.it ha un certificato invalido scatenando ERR_CERT_COMMON_NAME_INVALID
-        const targetUrl = imageUrl.replace('https://', 'http://');
-
-        console.log(`Proxying image: ${targetUrl}`);
+        // Proviamo direttamente l'URL originale ma via HTTP se possibile per saltare i problemi SSL
+        // Molti server storage supportano entrambi. Il proxy può fare HTTP anche se il sito è HTTPS.
+        const targetUrl = imageUrl.startsWith('https://storage.digibusiness.it')
+            ? imageUrl.replace('https://', 'http://')
+            : imageUrl;
 
         const response = await fetch(targetUrl, {
             headers: {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-            }
+                'User-Agent': 'Mozilla/5.0'
+            },
+            // Prestazioni: no-cache rimosso per permettere a Node/Edge di usare la sua cache
         });
 
         if (!response.ok) {
-            // Se fallisce in HTTP, prova HTTPS originale
-            const retryResponse = await fetch(imageUrl, {
-                headers: { 'User-Agent': 'Mozilla/5.0' }
-            });
-
-            if (!retryResponse.ok) {
-                return new NextResponse('Failed to fetch image', { status: 502 });
-            }
-
-            return await serveResponse(retryResponse);
+            return new NextResponse('Failed to fetch image', { status: 502 });
         }
 
-        return await serveResponse(response);
+        const arrayBuffer = await response.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+
+        const headers = new Headers();
+        headers.set('Content-Type', response.headers.get('Content-Type') || 'image/jpeg');
+        // CACHE AGGRESSIVA: Le immagini delle barche non cambiano quasi mai.
+        // Questo renderà il caricamento istantaneo dopo la prima volta.
+        headers.set('Cache-Control', 'public, max-age=31536000, immutable');
+
+        return new NextResponse(buffer, {
+            headers
+        });
 
     } catch (error) {
         console.error('Proxy error:', error);
         return new NextResponse('Internal Proxy Error', { status: 500 });
     }
-}
-
-async function serveResponse(response: Response) {
-    const arrayBuffer = await response.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-
-    const headers = new Headers();
-    headers.set('Content-Type', response.headers.get('Content-Type') || 'image/jpeg');
-    // Disabilitiamo il cache-control aggressivo per evitare che vengano servite immagini sbagliate
-    headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-    headers.set('Pragma', 'no-cache');
-    headers.set('Expires', '0');
-
-    return new NextResponse(buffer, {
-        headers
-    });
 }
