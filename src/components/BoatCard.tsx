@@ -31,7 +31,12 @@ export function BoatCard({ boat, onSwipe, style, drag = false }: BoatCardProps) 
         }
     };
 
-    const image = boat.ImagesList?.[0]?.ImageUrl || "/placeholder.jpg";
+    const secureUrl = (url: string | undefined) => {
+        if (!url) return "/placeholder.jpg";
+        return url.replace('http://', 'https://');
+    };
+
+    const image = secureUrl(boat.ImagesList?.[0]?.ImageUrl);
 
     const [showGallery, setShowGallery] = useState(false);
     const [galleryImages, setGalleryImages] = useState<any[]>([]);
@@ -47,12 +52,12 @@ export function BoatCard({ boat, onSwipe, style, drag = false }: BoatCardProps) 
             if (details && details.Images) {
                 // Normalize images: append .2048.jpg for Ultra HD
                 const imgs = details.Images.map(img => ({
-                    url: `${img.ImageUrl}.2048.jpg`
+                    url: secureUrl(`${img.ImageUrl}.2048.jpg`)
                 }));
                 setGalleryImages(imgs);
             } else {
                 // Fallback to current image list
-                setGalleryImages(boat.ImagesList?.map(img => ({ url: img.ImageUrl })) || []);
+                setGalleryImages(boat.ImagesList?.map(img => ({ url: secureUrl(img.ImageUrl) })) || []);
             }
             setShowGallery(true);
         } catch (err) {

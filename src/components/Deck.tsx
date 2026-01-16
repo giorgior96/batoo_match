@@ -167,7 +167,7 @@ export function Deck({ initialBoats }: DeckProps) {
     }
 
     return (
-        <div className="flex flex-col items-center h-full w-full max-w-md mx-auto relative pt-0 pb-8">
+        <div className="flex flex-col items-center h-full w-full max-w-md mx-auto relative pt-0 pb-8 px-4">
             {/* Onboarding Modal */}
             <UserOnboarding />
 
