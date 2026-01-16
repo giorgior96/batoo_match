@@ -2,46 +2,56 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
+/**
+ * Proxy route to handle external images with SSL certificate issues
+ * and provide a unified, secure endpoint for the client.
+ */
 export async function GET(request: NextRequest) {
-    const searchParams = request.nextUrl.searchParams;
+    const { searchParams } = new URL(request.url);
     const imageUrl = searchParams.get('url');
 
     if (!imageUrl) {
-        return new NextResponse('Missing URL', { status: 400 });
+        return new NextResponse('Missing image URL', { status: 400 });
     }
 
     try {
-        // Forza HTTP per il server-side fetch per evitare problemi di certificato SSL
-        const targetUrl = imageUrl.startsWith('https://storage.digibusiness.it')
-            ? imageUrl.replace('https://', 'http://')
-            : imageUrl;
+        // storage.digibusiness.it has an invalid SSL certificate (ERR_CERT_COMMON_NAME_INVALID).
+        // To bypass this, we force the internal server-side fetch to use HTTP.
+        // This is safe because it's a server-to-server request for public assets.
+        const targetUrl = imageUrl.replace('https://storage.digibusiness.it', 'http://storage.digibusiness.it');
 
-        // Fetch con cache di Next.js disabilitata forzatamente per il download verso il server proxy
-        // Ma passeremo gli header di cache al BROWSER dell'utente final.
+        console.log(`[Proxy] Fetching: ${targetUrl}`);
+
         const response = await fetch(targetUrl, {
-            headers: { 'User-Agent': 'Mozilla/5.0' }
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+            },
+            // Ensure we don't cache at the server layer which can lead to "same image" bugs
+            cache: 'no-store'
         });
 
         if (!response.ok) {
-            return new NextResponse('Failed to fetch image', { status: 502 });
+            console.error(`[Proxy] External error: ${response.status} ${response.statusText}`);
+            return new NextResponse(`Failed to fetch image: ${response.status}`, { status: 502 });
         }
 
-        const arrayBuffer = await response.arrayBuffer();
-        const buffer = Buffer.from(arrayBuffer);
+        const contentType = response.headers.get('Content-Type') || 'image/jpeg';
+        const buffer = await response.arrayBuffer();
 
-        const headers = new Headers();
-        headers.set('Content-Type', response.headers.get('Content-Type') || 'image/jpeg');
-        // CACHE PER IL BROWSER: Importante impostare public e max-age.
-        // Questo permetterà al browser di non richiedere più l'immagine per lo stesso URL.
-        headers.set('Cache-Control', 'public, max-age=31536000, immutable');
-        headers.set('Vary', 'Accept-Encoding'); // Aiuta i CDN a differenziare le richieste
-
+        // Build the response with strategic caching headers
         return new NextResponse(buffer, {
-            headers
+            status: 200,
+            headers: {
+                'Content-Type': contentType,
+                // CACHE: Private/No-Cache for the server (Netlify/Vercel) to avoid cross-user duplication.
+                // PUBLIC/Immutable for the BROWSER so it can cache locally and be fast.
+                'Cache-Control': 'public, max-age=31536000, immutable',
+                'X-Content-Type-Options': 'nosniff'
+            },
         });
 
-    } catch (error) {
-        console.error('Proxy error:', error);
-        return new NextResponse('Internal Proxy Error', { status: 500 });
+    } catch (error: any) {
+        console.error('[Proxy] Critical error:', error);
+        return new NextResponse(`Proxy error: ${error.message}`, { status: 500 });
     }
 }
