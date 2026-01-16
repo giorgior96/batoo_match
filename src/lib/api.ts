@@ -189,8 +189,16 @@ function normalizeBoats(boats: any[]): Boat[] {
     return boats.map(boat => {
         let imageUrl = boat.ImageUrl;
         if (imageUrl) imageUrl = imageUrl.replace(/\.(\d+)\.jpg$/i, '.512.jpg');
+
+        // Fix bad length data (e.g. 650 -> 6.50m)
+        let normalizedLength = boat.Length;
+        if (normalizedLength && normalizedLength > 90) {
+            normalizedLength = normalizedLength / 100;
+        }
+
         return {
             ...boat,
+            Length: normalizedLength, // Apply fixed length
             ImagesList: boat.ImagesList || (imageUrl ? [{ ImageUrl: imageUrl }] : []),
             City: boat.City || boat.VisibleAt || boat.Harbor
         };
